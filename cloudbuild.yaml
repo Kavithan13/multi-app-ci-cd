@@ -1,3 +1,6 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 steps:
 
 # Build Java image
@@ -41,3 +44,4 @@ steps:
 images:
 - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
 - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
+
