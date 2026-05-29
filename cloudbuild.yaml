@@ -3,50 +3,62 @@ options:
 
 steps:
 
-# ✅ Build Java image
+# ✅ Build Java Image
 - name: gcr.io/cloud-builders/docker
-  id: build-java
   args:
-    - build
-    - -t
-    - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
-    - ./java-app
+    [
+      "build",
+      "-t",
+      "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest",
+      "./java-app"
+    ]
 
-# ✅ Build Python image
+# ✅ Push Java Image
 - name: gcr.io/cloud-builders/docker
-  id: build-python
   args:
-    - build
-    - -t
-    - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
-    - ./python-app
+    [
+      "push",
+      "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest"
+    ]
 
-# ✅ Deploy Java (WAIT for build)
+# ✅ Build Python Image
+- name: gcr.io/cloud-builders/docker
+  args:
+    [
+      "build",
+      "-t",
+      "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest",
+      "./python-app"
+    ]
+
+# ✅ Push Python Image
+- name: gcr.io/cloud-builders/docker
+  args:
+    [
+      "push",
+      "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest"
+    ]
+
+# ✅ Deploy Java
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   entrypoint: gcloud
-  waitFor: ["build-java"]
   args:
-    - run
-    - deploy
-    - java-service
-    - --image=us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
-    - --region=us-central1
-    - --platform=managed
-    - --allow-unauthenticated
+    [
+      "run", "deploy", "java-service",
+      "--image", "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest",
+      "--region", "us-central1",
+      "--platform", "managed",
+      "--allow-unauthenticated"
+    ]
 
-# ✅ Deploy Python (WAIT for build)
+# ✅ Deploy Python
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   entrypoint: gcloud
-  waitFor: ["build-python"]
   args:
-    - run
-    - deploy
-    - python-service
-    - --image=us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
-    - --region=us-central1
-    - --platform=managed
-    - --allow-unauthenticated
-
-images:
-  - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
-  - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
+    [
+      "run", "deploy", "python-service",
+      "--image", "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest",
+      "--region", "us-central1",
+      "--platform", "managed",
+      "--allow-unauthenticated"
+    ]
