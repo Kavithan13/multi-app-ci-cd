@@ -1,48 +1,44 @@
 steps:
 
-# 🔹 Build Java Image
+# Build Java image
 - name: gcr.io/cloud-builders/docker
   args:
-    [
-      "build",
-      "-t",
-      "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest",
-      "./java-app"
-    ]
+    - build
+    - -t
+    - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
+    - ./java-app
 
-# 🔹 Build Python Image
+# Build Python image
 - name: gcr.io/cloud-builders/docker
   args:
-    [
-      "build",
-      "-t",
-      "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest",
-      "./python-app"
-    ]
+    - build
+    - -t
+    - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
+    - ./python-app
 
-# 🔹 Push Images
+# Push images
 images:
-- "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest"
-- "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest"
+- us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
+- us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
 
-# 🔹 Deploy Java to Cloud Run
+# Deploy Java service
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   args:
-    [
-      "run", "deploy", "java-service",
-      "--image", "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest",
-      "--region", "us-central1",
-      "--platform", "managed",
-      "--allow-unauthenticated"
-    ]
+    - run
+    - deploy
+    - java-service
+    - --image=us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
+    - --region=us-central1
+    - --platform=managed
+    - --allow-unauthenticated
 
-# 🔹 Deploy Python to Cloud Run
+# Deploy Python service
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   args:
-    [
-      "run", "deploy", "python-service",
-      "--image", "us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest",
-      "--region", "us-central1",
-      "--platform", "managed",
-      "--allow-unauthenticated"
-    ]
+    - run
+    - deploy
+    - python-service
+    - --image=us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
+    - --region=us-central1
+    - --platform=managed
+    - --allow-unauthenticated
