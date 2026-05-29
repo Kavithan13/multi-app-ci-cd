@@ -3,25 +3,28 @@ options:
 
 steps:
 
-# Build Java image
+# ✅ Build Java image
 - name: gcr.io/cloud-builders/docker
+  id: build-java
   args:
     - build
     - -t
     - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
     - ./java-app
 
-# Build Python image
+# ✅ Build Python image
 - name: gcr.io/cloud-builders/docker
+  id: build-python
   args:
     - build
     - -t
     - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
     - ./python-app
 
-# Deploy Java
+# ✅ Deploy Java (WAIT for build)
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   entrypoint: gcloud
+  waitFor: ["build-java"]
   args:
     - run
     - deploy
@@ -31,9 +34,10 @@ steps:
     - --platform=managed
     - --allow-unauthenticated
 
-# Deploy Python
+# ✅ Deploy Python (WAIT for build)
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   entrypoint: gcloud
+  waitFor: ["build-python"]
   args:
     - run
     - deploy
@@ -44,6 +48,5 @@ steps:
     - --allow-unauthenticated
 
 images:
-- us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
-- us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
-
+  - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
+  - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
