@@ -16,12 +16,7 @@ steps:
     - us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
     - ./python-app
 
-# Push images
-images:
-- us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
-- us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
-
-# Deploy Java service
+# Deploy Java
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   args:
     - run
@@ -32,7 +27,7 @@ images:
     - --platform=managed
     - --allow-unauthenticated
 
-# Deploy Python service
+# Deploy Python
 - name: gcr.io/google.com/cloudsdktool/cloud-sdk
   args:
     - run
@@ -42,3 +37,7 @@ images:
     - --region=us-central1
     - --platform=managed
     - --allow-unauthenticated
+
+images:
+- us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/java-app:latest
+- us-central1-docker.pkg.dev/$PROJECT_ID/my-repo/python-app:latest
